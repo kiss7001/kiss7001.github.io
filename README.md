@@ -1,6 +1,8 @@
 # kiss7001.github.io
 시키의 깃허브 블로그
 
+이 문서는 Jekyll 로 되어있음. 따라서 아래 [문법](https://teddylee777.github.io/jekyll/Jekyll-%EC%82%AC%EC%9A%A9%EC%9D%84-%EC%9C%84%ED%95%9C-markdown-%EB%AC%B8%EB%B2%95) 에서 공부해야 함.
+
 깃허브 Repository를 웹호스팅서버로 활용한다.
 정적페이지(html,image,css,js)만 되는것임.
 
