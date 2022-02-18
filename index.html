@@ -167,7 +167,7 @@
             //context: document.body
           }).done(function(result) {
             console.log(result);
-            $("#work_space").remove("");
+            $("#work_space>div").remove();
             $("#work_space").html(result);
             
           });
