@@ -60,8 +60,9 @@
         if($src != ""){
           $.ajax({
             url: $src,
-            context: document.body
+            //context: document.body
           }).done(function(result) {
+            console.log(result);
             $("#work_space").remove("");
             $("#work_space").append(result);
             
