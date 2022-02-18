@@ -18,6 +18,21 @@
 
       <img class="img-fluid" src="./avatar4.png" alt="Photo">
 
+      <ul class="nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#" src="./html/login.html">로그인</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" src="./html/test1.html">테스트1</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" src="./html/test2.html">테스트2</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled">로그아웃</a>
+        </li>
+      </ul>
+
       <dl>
         <dt>자주사용하는 템플릿</dt>
         <dd>https://kiss7001.github.io/home1/pages/tables/simple.html</dd>
@@ -36,6 +51,24 @@
     $(function () {
 
       $("#work_space").html("로딩완료"); 
+
+      $( "body" ).on( "click", ".nav-link", function(event) {
+        $obj = $(this);
+        $src = $obj.attr("src");
+        console.log("$src : " + $src);
+        console.log($src);
+        if($src != ""){
+          $.ajax({
+            url: $src,
+            context: document.body
+          }).done(function(result) {
+            $("#work_space").remove("");
+            $("#work_space").append(result);
+            
+          });
+        }
+
+      }):
       
     });
 
