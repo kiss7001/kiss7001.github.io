@@ -14,6 +14,10 @@
   <meta name="author" content="{{ . }}">
   {% endif %}
   
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hi+Melody&display=swap" rel="stylesheet">
+  
   <!-- ** Plugins Needed for the Project ** -->
   {% for css in site.data.plugins.css %}
   <link rel="stylesheet" href="{{ css | relative_url }}">
