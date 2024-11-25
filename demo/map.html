@@ -1,11 +1,180 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-	<base target="_top">
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	
-	<title>Quick Start - Leaflet</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대기관제 시스템</title>
+    <!-- AdminLTE 3.2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .content {
+            flex: 1;
+            display: flex;
+        }
+        .card {
+            flex: 1;
+            margin: 0; /* Remove card margins for full width/height */
+        }
+        .card-body {
+            height: 100%;
+        }
+
+        .content-wrapper>.content {
+            padding: .7rem .7rem;
+        }
+    </style>
+</head>
+<body class="sidebar-collapse">
+    <div class="wrapper">
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="/map.html" class="nav-link">관제화면</a>
+                </li>
+                <!-- <li class="nav-item d-none d-sm-inline-block">
+                    <a href="/map.html" class="nav-link">회원관리</a>
+                </li> -->
+            </ul>
+
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                  <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
+                    <i class="fas fa-th-large"></i>
+                  </a>
+                </li>
+              </ul>
+        </nav>
+        <!-- /.navbar -->
+
+        <!-- Sidebar -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <div class="text-center">
+                <a href="#" class="brand-link text-center">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASEAAAA8CAYAAAApIgzqAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2lpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDozMjNBMDA5NkJFMTkxMUU2QjZCOEE3MzE5NDNDRUFBQyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMzFBQTYwOTQ5RUIxMUU4QkY5M0NFRjU5OTNGQjQ3MSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMzFBQTYwODQ5RUIxMUU4QkY5M0NFRjU5OTNGQjQ3MSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgKFdpbmRvd3MpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6YmE0YjhlZmQtZGExYS04NjQwLTg1NjEtMDJiZjNlODE2ZmRhIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjMyM0EwMDk2QkUxOTExRTZCNkI4QTczMTk0M0NFQUFDIi8+IDwvcmRmOkRlc2Ny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" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="    border-radius: initial;background-color: white;">
+                    <span class="brand-text font-weight-light">&nbsp;</span>
+                </a>
+            </div>
+
+            <div class="sidebar">
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+                        <li class="nav-item">
+                            <a href="/map.html" class="nav-link active">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>관제화면</p>
+                            </a>
+                        </li>
+                        <!-- <li class="nav-item">
+                            <a href="/map.html" class="nav-link">
+                                <i class="nav-icon fas fa-th"></i>
+                                <p>회원관리</p>
+                            </a>
+                        </li> -->
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+        <!-- /.sidebar -->
+
+        <!-- Content Wrapper -->
+        <div class="content-wrapper">
+            <!-- <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1 class="m-0">관제화면</h1>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <section class="content">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="map" style="height: 100%;"></div>
+                        <!-- <div id="custom_map_pop" style="top: 20px;position: absolute;right: 20px;margin: 10px;width: 100px;height: 200px;background: #f2eef18f;z-index: 1000;">
+                            <div class="text-center">
+                                <button type="button" class="btn btn-block btn-default btn-xs">Default</button>
+                                <button type="button" class="btn btn-block btn-secondary btn-xs">Secondary</button>
+                                <button type="button" class="btn btn-block btn-success btn-xs">Success</button>
+                                <button type="button" class="btn btn-block btn-info btn-xs">Info</button>
+                                <button type="button" class="btn btn-block btn-danger btn-xs">Danger</button>
+                                <button type="button" class="btn btn-block btn-warning btn-xs">Warning</button>
+                                <button type="button" class="btn btn-block btn-light btn-xs">Light</button>
+                                <button type="button" class="btn btn-block btn-dark btn-xs">Dark</button>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+            </section>
+        </div>
+        <!-- /.content-wrapper -->
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="float-right d-none d-sm-inline">
+                Version 1.0
+            </div>
+            <strong>&copy; 2024 <a href="https://kiss7001.github.io">kiss7001.github.io</a>.</strong> All rights reserved.
+        </footer>
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
+
+    <style>
+        #map {
+            height: 100vh;
+        }
+        .custom-control {
+            background-color: #ffffff70;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        .custom-control button {
+            /* display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 8px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer; */
+        }
+        .custom-control button:hover {
+            /* background-color: #0056b3; */
+        }
+    </style>
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <!-- AdminLTE 3.2 Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	
@@ -61,279 +230,456 @@
 
     <script src="https://cdn.jsdelivr.net/npm/leaflet-polylinedecorator"></script>
 
-	<style>
-		html, body {
-			height: 100%;
-			margin: 0;
-		}
-		.leaflet-container {
-			height: 400px;
-			width: 600px;
-			max-width: 100%;
-			max-height: 100%;
-		}
-	</style>
+    <script>
 
-	
-</head>
-<body onload="">
-
-<div id="map" style="width: 100%; height: 100%;"></div>
-<script>
-
-	// const map = L.map('map').setView([37.5665, 126.9780 ], 17);
-    var marker = [];
-
-    var map = L.map('map', {
-        center: [37.5665, 126.9780], // 대한민국 서울시청 좌표
-        zoom: 12, // 초기 줌 레벨
-        //minZoom: 5, // 최소 줌 레벨
-        maxBounds: [
-            [33.0, 124.0],  // 대한민국 남서쪽 범위 (제주 포함)
-            [43.0, 132.0]   // 대한민국 북동쪽 범위 (독도 포함)
-        ]
-    });
-
-
-    map.addControl(new L.Control.Fullscreen());
-
-	// const tiles = L.tileLayer('http://openstreetmap-local.ubikhan.com:81/tile/{z}/{x}/{y}.png', {
-    //     //minZoom: 8,    // 대한민국 전체
-	// 	//maxZoom: 19,    //
-	// 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-	// }).addTo(map);
-
-	const tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-        //minZoom: 8,    // 대한민국 전체
-		//maxZoom: 19,    //
-		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-	}).addTo(map);
-
-    L.control.scale().addTo(map);
-
-	//const marker = L.marker([37.5665, 126.9780]).addTo(map);
-
-    /*
-	const circle = L.circle([37.5665, 126.9780], {
-		color: 'red',
-		fillColor: '#f03',
-		fillOpacity: 0.5,
-		radius: 500
-	}).addTo(map);
-    */
-
-    /*
-	const polygon = L.polygon([
-		[37.56343632130487 , 126.96806755731681],
-		[37.56264468642217 , 126.9730480018259],
-		[37.56603420645415 , 126.98246413636637]
-	]).addTo(map);
-    */
-
-    // const routing = L.Routing.control({
-    //     waypoints: [
-    //         L.latLng(37.61126220315685 , 127.02719038633309),
-    //         L.latLng(37.50777107541808 , 127.15738895043091)
-    //     ],
-    //     routeWhileDragging: true,
-    //     geocoder: L.Control.Geocoder.nominatim()
-    // }).addTo(map);
-
-    // leaflet-svg-shape-markers
-    // SVG 마커 생성 (원형)
-    // var circleMarker = L.shapeMarker([37.5665, 126.9780], {
-    //     shape: "star",         // 모양: circle, square, diamond, etc.
-    //     radius: 10,              // 반지름 (픽셀 단위)
-    //     fillColor: "blue",       // 채우기 색상
-    //     color: "black",          // 테두리 색상
-    //     weight: 2,               // 테두리 두께
-    //     opacity: 1,              // 테두리 투명도
-    //     fillOpacity: 0.6         // 채우기 투명도
-    // }).addTo(map);
-    // circleMarker.remove();
-
-
-    // // WebGL 히트맵 생성
-    // var heatmap = L.webGLHeatmap({
-    //     size: 50,             // 각 점의 반경 (픽셀 단위)
-    //     opacity: 1,         // 히트맵 전체의 투명도
-    //     intensityScale: 1.0   // 강도 스케일
-    // }).addTo(map);
-
-    // //히트맵 데이터 추가
-    // heatmap.setData([
-    //     { lat: 37.5665, lng: 126.9780, intensity: 0.5 },
-    //     { lat: 37.5651, lng: 126.9895, intensity: 1.0 },
-    //     { lat: 37.5639, lng: 126.9757, intensity: 0.8 }
-    // ]);
-
-    // map.addLayer(heatmap);
-
-    //custom size for this example, and autoresize because map style has a percentage width
-    var heatmap = L.webGLHeatmap({
-        size: 50,
-        units: 'px',
-        alphaRange: 0.4
-    });
-
-    var dataPoints = [
-        [37.5665, 126.9780], // 서울시청
-        //[37.5665, 126.9780],
-        //[37.5665, 126.9780],
-        [37.5702, 126.9769],
-        [37.5650, 126.9808],
-        [37.5630, 126.9825],
-        [37.5648, 126.9794],
-        [37.5675, 126.9752],
-        [37.5621, 126.9834],
-        [37.5688, 126.9777],
-        [37.5660, 126.9790],
-        [37.5672, 126.9782],
-        [37.5681, 126.9773],
-        [37.5657, 126.9800],
-        [37.5655, 126.9785],
-        [37.5705, 126.9765],
-        [37.5650, 126.9775],
-        [37.5690, 126.9740],
-        [37.5670, 126.9795],
-        [37.5640, 126.9820],
-        [37.5635, 126.9830],
-        [37.5680, 126.9770],
-        [37.5695, 126.9755],
-        [37.5700, 126.9760],
-        [37.5642, 126.9828],
-        [37.5675, 126.9785],
-        //[37.5650, 126.9805],
-        [37.5667, 126.9782],
-        [37.5685, 126.9767],
-        [37.5700, 126.9750],
-        [37.5638, 126.9825],
-        [37.5648, 126.9818],
-        [37.5656, 126.9802],
-        [37.5662, 126.9798],
-        [37.5670, 126.9787],
-        [37.5678, 126.9776],
-        [37.5663, 126.9793],
-        [37.5652, 126.9800],
-        [37.5647, 126.9812],
-        [37.5630, 126.9820],
-        [37.5635, 126.9828],
-        [37.5640, 126.9815],
-        [37.5645, 126.9810],
-        [37.5650, 126.9805],
-        [37.5670, 126.9775],
-        [37.5680, 126.9765],
-        [37.5685, 126.9758],
-        [37.5690, 126.9752],
-        [37.5700, 126.9745],
-        [37.5710, 126.9735]
-    ];
-
-    // heatmap.setData(dataPoints);
-    // heatmap.multiply(2);
-
-    // map.addLayer(heatmap);
-
-    // 커스텀 오버레이
-    // var customHtmlIcon = L.divIcon({
-    //     className: 'custom-icon',
-    //     html: '<div style="background-color: red; color: white; padding: 5px;">Custom Overlay</div>',
-    //     iconSize: [100, 50]  // 오버레이 크기
-    // });
-
-    // var customMarker = L.marker([37.5685, 126.9758], {icon: customHtmlIcon}).addTo(map);
-
-    // 커스텀 이미지 마커
-    // var customIcon = L.icon({
-    //     iconUrl: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', // 커스텀 이미지 경로
-    //     iconSize: [32, 32], // 아이콘 크기
-    //     iconAnchor: [16, 32], // 아이콘 기준점
-    //     popupAnchor: [0, -32] // 팝업이 나타날 위치
-    // });
-
-    // var marker = L.marker([37.5680, 126.9765], {icon: customIcon}).addTo(map);
-    // marker.bindPopup("This is a custom marker!");
-
-    // 바람 데이터 (기상 데이터 예시)
-    /*
-    var windData = {
-        "type": "FeatureCollection",
-        "features": [
-            {
-                "type": "Feature",
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [37.5680, 126.9765] // 샌프란시스코
-                },
-                "properties": {
-                    "u": 10,  // 동서 방향 바람 속도 (m/s)
-                    "v": 5    // 남북 방향 바람 속도 (m/s)
-                }
-            }
-        ]
-    };
-
-    // Leaflet Velocity 플러그인 사용하여 바람 벡터 표시
-    var velocityLayer = L.velocityLayer({
-        displayValues: true,
-        displayOptions: {
-            velocityType: 'm/s',
-            opacity: 0.7,
-            position: 'bottomleft'
-        }
-    }).addTo(map);
-
-    // 바람 데이터 추가
-    velocityLayer.addData(windData);
-    */
-
-    // 데이터 포인트로 마커 추가
-    // dataPoints.forEach(function (point,index) {
-    //     marker[index] = L.marker(point).addTo(map);
-
-    //     // 마커 클릭 이벤트
-    //     marker[index].on('click', function () {
-    //         var lat = point[0];
-    //         var lng = point[1];
-    //         console.log(`Clicked coordinates: Latitude ${lat}, Longitude ${lng}`);
-    //         alert(`Clicked coordinates:\nLatitude: ${lat}\nLongitude: ${lng}`);
-    //     });
-    // });
-
-    //
+        // const map = L.map('map').setView([37.5665, 126.9780 ], 17);
+        let marker_arr = [];
+        let marker = null;
+        let circle = null;
+        let polygon = null;
+        let routing = null;
+        let svgMarker = null;
     
-    var decoratorPolyline = L.polyline(dataPoints).addTo(map);
+        var map = L.map('map', {
+            center: [37.5665, 126.9780], // 대한민국 서울시청 좌표
+            zoom: 12, // 초기 줌 레벨
+            //minZoom: 5, // 최소 줌 레벨
+            maxBounds: [
+                [33.0, 124.0],  // 대한민국 남서쪽 범위 (제주 포함)
+                [43.0, 132.0]   // 대한민국 북동쪽 범위 (독도 포함)
+            ]
+        });
+    
+    
+        map.addControl(new L.Control.Fullscreen());
+    
+        const tiles = L.tileLayer('http://openstreetmap-local.ubikhan.com:81/tile/{z}/{x}/{y}.png', {
+            //minZoom: 8,    // 대한민국 전체
+            //maxZoom: 19,    //
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+    
+        L.control.scale().addTo(map);
 
-    var decorator = L.polylineDecorator(decoratorPolyline, {
-        // patterns: [
-        //     { offset: 25, repeat: 50, symbol: L.Symbol.arrowHead({ pixelSize: 10, pathOptions: { color: 'red' } }) }
-        // ]
-        patterns: [
-            { offset: 0, repeat: 10, symbol: L.Symbol.dash({pixelSize: 5, pathOptions: {color: '#000', weight: 1, opacity: 0.2}}) },
-            { offset: '16%', repeat: 80, symbol: L.Symbol.marker({rotate: true, markerOptions: {
-                icon: L.icon({
-                    iconUrl: 'https://bbecquet.github.io/Leaflet.PolylineDecorator/example/icon_plane.png',
-                    iconAnchor: [16, 16]
-                })
-            }})}
-        ]
-    }).addTo(map);
 
-    // font-awesome 활용마커(윈도우 onload후 사용가능)
-    function ExtraMarkersCreate(){
-        var redMarker = L.ExtraMarkers.icon({
-            icon: 'fa-coffee',
-            markerColor: 'red',
-            shape: 'square',
-            prefix: 'fa'
+        // 커스텀 컨트롤박스 생성
+        const customControl = L.Control.extend({
+            options: {
+                position: 'topright'
+            },
+            onAdd: function (map) {
+                // Create a container for the control
+                var container = L.DomUtil.create('div', 'custom-control');
+
+                // Add buttons
+                var button1 = L.DomUtil.create('button', '', container);
+                L.DomUtil.addClass(button1, 'btn btn-block btn-default btn-xs');
+                button1.innerText = '마커';
+                L.DomEvent.on(button1, 'click', function () {
+                    //alert('Button 1 clicked!');
+                    customMarker();
+                });
+
+                var button2 = L.DomUtil.create('button', '', container);
+                L.DomUtil.addClass(button2, 'btn btn-block btn-secondary btn-xs');
+                button2.innerText = '원형';
+                L.DomEvent.on(button2, 'click', function () {
+                    //alert('Button 2 clicked!');
+                    customCircle();
+                });
+
+                var button3 = L.DomUtil.create('button', '', container);
+                L.DomUtil.addClass(button3, 'btn btn-block btn-success btn-xs');
+                button3.innerText = '폴리곤';
+                L.DomEvent.on(button3, 'click', function () {
+                    //alert('Button 3 clicked!');
+                    customPolygon();
+                });
+
+                var button4 = L.DomUtil.create('button', '', container);
+                L.DomUtil.addClass(button4, 'btn btn-block btn-info btn-xs');
+                button4.innerText = '경로검색';
+                L.DomEvent.on(button4, 'click', function () {
+                    //alert('Button 4 clicked!');
+                    customRouting();
+                });
+
+                var button5 = L.DomUtil.create('button', '', container);
+                L.DomUtil.addClass(button5, 'btn btn-block btn-danger btn-xs');
+                button5.innerText = 'SVG 마커';
+                L.DomEvent.on(button5, 'click', function () {
+                    //alert('Button 5 clicked!');
+                    customSvgMarker();
+                });
+
+                var button6 = L.DomUtil.create('button', '', container);
+                L.DomUtil.addClass(button6, 'btn btn-block btn-warning btn-xs');
+                button6.innerText = '히트맵';
+                L.DomEvent.on(button6, 'click', function () {
+                    alert('준비중');
+                    //customHeatmap();
+                });
+
+                var button7 = L.DomUtil.create('button', '', container);
+                L.DomUtil.addClass(button7, 'btn btn-block btn-light btn-xs');
+                button7.innerText = '커스텀 오버레이 & 마커';
+                L.DomEvent.on(button7, 'click', function () {
+                    alert('준비중');
+                });
+
+                var button8 = L.DomUtil.create('button', '', container);
+                L.DomUtil.addClass(button8, 'btn btn-block btn-dark btn-xs');
+                button8.innerText = '바람표현';
+                L.DomEvent.on(button8, 'click', function () {
+                    alert('준비중');
+                });
+
+                return container;
+            }
         });
 
-        L.marker([37.5710, 126.9735], {icon: redMarker}).addTo(map);
+        // 커스텀 컨트롤박스를 지도에 추가
+        map.addControl(new customControl());
+
+        // 커스텀 마커
+        function customMarker(){
+            if(marker === null){
+                marker = L.marker([37.4565, 126.8780]).addTo(map);
+            }else{
+                map.removeLayer(marker);
+                marker = null;
+            }
+        }
+
+        // 커스텀 원형그리기
+        function customCircle(){
+            if(circle === null){
+                circle = L.circle([37.5765, 126.9880], {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.5,
+                    radius: 500
+                }).addTo(map);
+            }else{
+                map.removeLayer(circle);
+                circle = null;
+            }
+        }
+
+        // 커스텀 선그리기
+        function customPolygon(){
+            if(polygon === null){
+                polygon = L.polygon([
+                    [37.56343632130487 , 126.96806755731681],
+                    [37.56264468642217 , 126.9730480018259],
+                    [37.56603420645415 , 126.98246413636637]
+                ]).addTo(map);
+            }else{
+                map.removeLayer(polygon);
+                polygon = null;
+            }
+        }
+
+        function customRouting(){
+            if(routing === null){
+                routing = L.Routing.control({
+                waypoints: [
+                    L.latLng(37.61126220315685 , 127.02719038633309),
+                    L.latLng(37.50777107541808 , 127.15738895043091)
+                ],
+                routeWhileDragging: true,
+                geocoder: L.Control.Geocoder.nominatim()
+            }).addTo(map);
+            }else{
+                routing.remove();
+                routing = null;
+            }
+
+        }
+
+        function customSvgMarker(){
+            if(svgMarker === null){
+                svgMarker = L.shapeMarker([37.5665, 126.9780], {
+                    shape: "star",         // 모양: circle, square, diamond, etc.
+                    radius: 10,              // 반지름 (픽셀 단위)
+                    fillColor: "blue",       // 채우기 색상
+                    color: "black",          // 테두리 색상
+                    weight: 2,               // 테두리 두께
+                    opacity: 1,              // 테두리 투명도
+                    fillOpacity: 0.6         // 채우기 투명도
+                }).addTo(map);
+            }else{
+                svgMarker.remove();
+                svgMarker = null;
+            }
+
+        }
+
+        function customHeatmap(){
+            if(svgMarker === null){
+                svgMarker = L.shapeMarker([37.5665, 126.9780], {
+                    shape: "star",         // 모양: circle, square, diamond, etc.
+                    radius: 10,              // 반지름 (픽셀 단위)
+                    fillColor: "blue",       // 채우기 색상
+                    color: "black",          // 테두리 색상
+                    weight: 2,               // 테두리 두께
+                    opacity: 1,              // 테두리 투명도
+                    fillOpacity: 0.6         // 채우기 투명도
+                }).addTo(map);
+            }else{
+                svgMarker.remove();
+                svgMarker = null;
+            }
+
+        }
+
+
+
+
+
+    
+    
+        // // WebGL 히트맵 생성
+        // var heatmap = L.webGLHeatmap({
+        //     size: 50,             // 각 점의 반경 (픽셀 단위)
+        //     opacity: 1,         // 히트맵 전체의 투명도
+        //     intensityScale: 1.0   // 강도 스케일
+        // }).addTo(map);
+    
+        // //히트맵 데이터 추가
+        // heatmap.setData([
+        //     { lat: 37.5665, lng: 126.9780, intensity: 0.5 },
+        //     { lat: 37.5651, lng: 126.9895, intensity: 1.0 },
+        //     { lat: 37.5639, lng: 126.9757, intensity: 0.8 }
+        // ]);
+    
+        // map.addLayer(heatmap);
+    
+        //custom size for this example, and autoresize because map style has a percentage width
+        var heatmap = L.webGLHeatmap({
+            size: 50,
+            units: 'px',
+            alphaRange: 0.4
+        });
+    
+        var dataPoints = [
+            [37.5665, 126.9780], // 서울시청
+            //[37.5665, 126.9780],
+            //[37.5665, 126.9780],
+            [37.5702, 126.9769],
+            [37.5650, 126.9808],
+            [37.5630, 126.9825],
+            [37.5648, 126.9794],
+            [37.5675, 126.9752],
+            [37.5621, 126.9834],
+            [37.5688, 126.9777],
+            [37.5660, 126.9790],
+            [37.5672, 126.9782],
+            [37.5681, 126.9773],
+            [37.5657, 126.9800],
+            [37.5655, 126.9785],
+            [37.5705, 126.9765],
+            [37.5650, 126.9775],
+            [37.5690, 126.9740],
+            [37.5670, 126.9795],
+            [37.5640, 126.9820],
+            [37.5635, 126.9830],
+            [37.5680, 126.9770],
+            [37.5695, 126.9755],
+            [37.5700, 126.9760],
+            [37.5642, 126.9828],
+            [37.5675, 126.9785],
+            //[37.5650, 126.9805],
+            [37.5667, 126.9782],
+            [37.5685, 126.9767],
+            [37.5700, 126.9750],
+            [37.5638, 126.9825],
+            [37.5648, 126.9818],
+            [37.5656, 126.9802],
+            [37.5662, 126.9798],
+            [37.5670, 126.9787],
+            [37.5678, 126.9776],
+            [37.5663, 126.9793],
+            [37.5652, 126.9800],
+            [37.5647, 126.9812],
+            [37.5630, 126.9820],
+            [37.5635, 126.9828],
+            [37.5640, 126.9815],
+            [37.5645, 126.9810],
+            [37.5650, 126.9805],
+            [37.5670, 126.9775],
+            [37.5680, 126.9765],
+            [37.5685, 126.9758],
+            [37.5690, 126.9752],
+            [37.5700, 126.9745],
+            [37.5710, 126.9735]
+        ];
+    
+        // heatmap.setData(dataPoints);
+        // heatmap.multiply(2);
+    
+        // map.addLayer(heatmap);
+    
+        // 커스텀 오버레이
+        // var customHtmlIcon = L.divIcon({
+        //     className: 'custom-icon',
+        //     html: '<div style="background-color: red; color: white; padding: 5px;">Custom Overlay</div>',
+        //     iconSize: [100, 50]  // 오버레이 크기
+        // });
+    
+        // var customMarker = L.marker([37.5685, 126.9758], {icon: customHtmlIcon}).addTo(map);
+    
+        // 커스텀 이미지 마커
+        // var customIcon = L.icon({
+        //     iconUrl: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', // 커스텀 이미지 경로
+        //     iconSize: [32, 32], // 아이콘 크기
+        //     iconAnchor: [16, 32], // 아이콘 기준점
+        //     popupAnchor: [0, -32] // 팝업이 나타날 위치
+        // });
+    
+        // var marker = L.marker([37.5680, 126.9765], {icon: customIcon}).addTo(map);
+        // marker.bindPopup("This is a custom marker!");
+    
+        // 바람 데이터 (기상 데이터 예시)
+        /*
+        var windData = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [37.5680, 126.9765] // 샌프란시스코
+                    },
+                    "properties": {
+                        "u": 10,  // 동서 방향 바람 속도 (m/s)
+                        "v": 5    // 남북 방향 바람 속도 (m/s)
+                    }
+                }
+            ]
+        };
+    
+        // Leaflet Velocity 플러그인 사용하여 바람 벡터 표시
+        var velocityLayer = L.velocityLayer({
+            displayValues: true,
+            displayOptions: {
+                velocityType: 'm/s',
+                opacity: 0.7,
+                position: 'bottomleft'
+            }
+        }).addTo(map);
+    
+        // 바람 데이터 추가
+        velocityLayer.addData(windData);
+        */
+    
+        // 데이터 포인트로 마커 추가
+        // dataPoints.forEach(function (point,index) {
+        //     marker[index] = L.marker(point).addTo(map);
+    
+        //     // 마커 클릭 이벤트
+        //     marker[index].on('click', function () {
+        //         var lat = point[0];
+        //         var lng = point[1];
+        //         console.log(`Clicked coordinates: Latitude ${lat}, Longitude ${lng}`);
+        //         alert(`Clicked coordinates:\nLatitude: ${lat}\nLongitude: ${lng}`);
+        //     });
+        // });
+    
+        //
+        
+        // var decoratorPolyline = L.polyline(dataPoints).addTo(map);
+    
+        // var decorator = L.polylineDecorator(decoratorPolyline, {
+        //     // patterns: [
+        //     //     { offset: 25, repeat: 50, symbol: L.Symbol.arrowHead({ pixelSize: 10, pathOptions: { color: 'red' } }) }
+        //     // ]
+        //     patterns: [
+        //         { offset: 0, repeat: 10, symbol: L.Symbol.dash({pixelSize: 5, pathOptions: {color: '#000', weight: 1, opacity: 0.2}}) },
+        //         { offset: '16%', repeat: 80, symbol: L.Symbol.marker({rotate: true, markerOptions: {
+        //             icon: L.icon({
+        //                 iconUrl: 'https://bbecquet.github.io/Leaflet.PolylineDecorator/example/icon_plane.png',
+        //                 iconAnchor: [16, 16]
+        //             })
+        //         }})}
+        //     ]
+        // }).addTo(map);
+    
+        // font-awesome 활용마커(윈도우 onload후 사용가능)
+        function ExtraMarkersCreate(){
+            var redMarker = L.ExtraMarkers.icon({
+                icon: 'fa-coffee',
+                markerColor: 'red',
+                shape: 'square',
+                prefix: 'fa'
+            });
+    
+            L.marker([37.5710, 126.9735], {icon: redMarker}).addTo(map);
+        }
+
+
+
+
+
+
+
+
+/**
+ * AdminLTE Demo Menu
+ * ------------------
+ * You should not use this file in production.
+ * This file is for demo purposes only.
+ */
+
+/* eslint-disable camelcase */
+
+(function ($) {
+  'use strict'
+
+  var $sidebar = $('.control-sidebar')
+  var $container = $('<div />', {
+    class: 'p-3 control-sidebar-content'
+  })
+
+  $sidebar.append($container)
+
+  // Checkboxes
+
+  $container.append(
+    '<h5>환경설정</h5><hr class="mb-2"/>'
+  )
+
+  $container.append('<h6>왼쪽메뉴</h6>')
+
+  var $sidebar_collapsed_checkbox = $('<input />', {
+    type: 'checkbox',
+    value: 1,
+    checked: $('body').hasClass('sidebar-collapse'),
+    class: 'mr-1'
+  }).on('click', function () {
+    if ($(this).is(':checked')) {
+      $('body').addClass('sidebar-collapse')
+      $(window).trigger('resize')
+    } else {
+      $('body').removeClass('sidebar-collapse')
+      $(window).trigger('resize')
     }
+  })
+  var $sidebar_collapsed_container = $('<div />', { class: 'mb-1' }).append($sidebar_collapsed_checkbox).append('<span>접기</span>')
+  $container.append($sidebar_collapsed_container)
 
-</script>
+  $(document).on('collapsed.lte.pushmenu', '[data-widget="pushmenu"]', function () {
+    $sidebar_collapsed_checkbox.prop('checked', true)
+  })
+  $(document).on('shown.lte.pushmenu', '[data-widget="pushmenu"]', function () {
+    $sidebar_collapsed_checkbox.prop('checked', false)
+  })
+
+})(jQuery)
 
 
+    
+    </script>
 
 </body>
 </html>
