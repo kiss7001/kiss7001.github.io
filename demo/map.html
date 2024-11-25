@@ -97,7 +97,13 @@
 
     map.addControl(new L.Control.Fullscreen());
 
-	const tiles = L.tileLayer('http://openstreetmap-local.ubikhan.com:81/tile/{z}/{x}/{y}.png', {
+	// const tiles = L.tileLayer('http://openstreetmap-local.ubikhan.com:81/tile/{z}/{x}/{y}.png', {
+    //     //minZoom: 8,    // 대한민국 전체
+	// 	//maxZoom: 19,    //
+	// 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	// }).addTo(map);
+
+	const tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         //minZoom: 8,    // 대한민국 전체
 		//maxZoom: 19,    //
 		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
