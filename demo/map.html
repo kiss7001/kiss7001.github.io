@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<base target="_top">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>Quick Start - Leaflet</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	
+	<!-- <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" /> -->
+    <!-- 지도표현라이브러리 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- 지도표현라이브러리-플러그인(경로추적) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <!-- 지도표현라이브러리-플러그인(지오코딩) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <!-- Leaflet.GeometryUtil -->
+    <!-- 
+    1. distance(map, latlngA, latlngB) : 두 좌표 간의 직선 거리를 반환합니다.
+    const distance = L.GeometryUtil.distance(map, latlng1, latlng2);
+    const distance = L.GeometryUtil.distance(map, [37.5665, 126.9780], [37.5700, 126.9820]);
+    2. bearing(latlngA, latlngB) : 두 점 사이의 방향(각도)을 반환합니다.
+    const angle = L.GeometryUtil.bearing(latlng1, latlng2);
+    3. closest(map, layer, latlng) : 폴리라인이나 다각형 레이어에서 특정 좌표에 가장 가까운 점을 찾습니다.
+    const closestPoint = L.GeometryUtil.closest(map, polyline, latlng);
+
+    const polyline = L.polyline([[37.5665, 126.9780], [37.5700, 126.9820]]).addTo(map);
+    const closestPoint = L.GeometryUtil.closest(map, polyline, [37.5675, 126.9790]);
+    4. length(layer) : 폴리라인의 총 길이를 반환합니다.
+    const lineLength = L.GeometryUtil.length(polyline);
+    5. destination(latlng, heading, distance) : 특정 좌표에서 주어진 방향(각도)과 거리만큼 이동한 새로운 좌표를 반환합니다.
+    const newPoint = L.GeometryUtil.destination(latlng, 45, 1000); // 45도 방향으로 1000m
+    -->
+
+    <!-- Leaflet.rotatedMarker -->
+    <!-- 
+    https://raw.githubusercontent.com/bbecquet/Leaflet.RotatedMarker/master/leaflet.rotatedMarker.js
+    -->
+    <!-- leaflet-svg-shape-markers -->
+    <!-- https://www.npmjs.com/package/leaflet-svg-shape-markers -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-svg-shape-markers@1.4.0/dist/leaflet-svg-shape-markers.min.js" integrity="sha256-kvX2nOqB13h3NzdRGWFFiasrqqWctgDvgXlqsa2v6p0=" crossorigin="anonymous"></script>
+    <!-- https://www.jsdelivr.com/?query=author%3A%20Leaflet -->
+    <!-- https://github.com/Leaflet/Leaflet.markercluster/ -->
+
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+
+    <script src="https://ursudio.github.io/leaflet-webgl-heatmap/src/webgl-heatmap/webgl-heatmap.js"></script>
+    <script src="https://unpkg.com/leaflet-webgl-heatmap/dist/leaflet-webgl-heatmap.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-extra-markers@1.2.2/dist/css/leaflet.extra-markers.min.css" integrity="sha256-7Zr0s0MoLVy6pFTRq2DKuki8xw1OzRYY1Q3S2pTDtvo=" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-extra-markers@1.2.2/src/assets/js/leaflet.extra-markers.min.js" type="module"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-velocity@2.1.4/dist/leaflet-velocity.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-velocity@2.1.4/dist/leaflet-velocity.min.css" integrity="sha256-M2GksIxiyP3cpwMSJed56ChJE0wDoGhesQnU1FnfGd8=" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-polylinedecorator"></script>
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		.leaflet-container {
+			height: 400px;
+			width: 600px;
+			max-width: 100%;
+			max-height: 100%;
+		}
+	</style>
+
+	
+</head>
+<body onload="">
+
+<div id="map" style="width: 100%; height: 100%;"></div>
+<script>
+
+	// const map = L.map('map').setView([37.5665, 126.9780 ], 17);
+    var marker = [];
+
+    var map = L.map('map', {
+        center: [37.5665, 126.9780], // 대한민국 서울시청 좌표
+        zoom: 12, // 초기 줌 레벨
+        //minZoom: 5, // 최소 줌 레벨
+        maxBounds: [
+            [33.0, 124.0],  // 대한민국 남서쪽 범위 (제주 포함)
+            [43.0, 132.0]   // 대한민국 북동쪽 범위 (독도 포함)
+        ]
+    });
+
+
+    map.addControl(new L.Control.Fullscreen());
+
+	const tiles = L.tileLayer('http://openstreetmap-local.ubikhan.com:81/tile/{z}/{x}/{y}.png', {
+        //minZoom: 8,    // 대한민국 전체
+		//maxZoom: 19,    //
+		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	}).addTo(map);
+
+    L.control.scale().addTo(map);
+
+	//const marker = L.marker([37.5665, 126.9780]).addTo(map);
+
+    /*
+	const circle = L.circle([37.5665, 126.9780], {
+		color: 'red',
+		fillColor: '#f03',
+		fillOpacity: 0.5,
+		radius: 500
+	}).addTo(map);
+    */
+
+    /*
+	const polygon = L.polygon([
+		[37.56343632130487 , 126.96806755731681],
+		[37.56264468642217 , 126.9730480018259],
+		[37.56603420645415 , 126.98246413636637]
+	]).addTo(map);
+    */
+
+    // const routing = L.Routing.control({
+    //     waypoints: [
+    //         L.latLng(37.61126220315685 , 127.02719038633309),
+    //         L.latLng(37.50777107541808 , 127.15738895043091)
+    //     ],
+    //     routeWhileDragging: true,
+    //     geocoder: L.Control.Geocoder.nominatim()
+    // }).addTo(map);
+
+    // leaflet-svg-shape-markers
+    // SVG 마커 생성 (원형)
+    // var circleMarker = L.shapeMarker([37.5665, 126.9780], {
+    //     shape: "star",         // 모양: circle, square, diamond, etc.
+    //     radius: 10,              // 반지름 (픽셀 단위)
+    //     fillColor: "blue",       // 채우기 색상
+    //     color: "black",          // 테두리 색상
+    //     weight: 2,               // 테두리 두께
+    //     opacity: 1,              // 테두리 투명도
+    //     fillOpacity: 0.6         // 채우기 투명도
+    // }).addTo(map);
+    // circleMarker.remove();
+
+
+    // // WebGL 히트맵 생성
+    // var heatmap = L.webGLHeatmap({
+    //     size: 50,             // 각 점의 반경 (픽셀 단위)
+    //     opacity: 1,         // 히트맵 전체의 투명도
+    //     intensityScale: 1.0   // 강도 스케일
+    // }).addTo(map);
+
+    // //히트맵 데이터 추가
+    // heatmap.setData([
+    //     { lat: 37.5665, lng: 126.9780, intensity: 0.5 },
+    //     { lat: 37.5651, lng: 126.9895, intensity: 1.0 },
+    //     { lat: 37.5639, lng: 126.9757, intensity: 0.8 }
+    // ]);
+
+    // map.addLayer(heatmap);
+
+    //custom size for this example, and autoresize because map style has a percentage width
+    var heatmap = L.webGLHeatmap({
+        size: 50,
+        units: 'px',
+        alphaRange: 0.4
+    });
+
+    var dataPoints = [
+        [37.5665, 126.9780], // 서울시청
+        //[37.5665, 126.9780],
+        //[37.5665, 126.9780],
+        [37.5702, 126.9769],
+        [37.5650, 126.9808],
+        [37.5630, 126.9825],
+        [37.5648, 126.9794],
+        [37.5675, 126.9752],
+        [37.5621, 126.9834],
+        [37.5688, 126.9777],
+        [37.5660, 126.9790],
+        [37.5672, 126.9782],
+        [37.5681, 126.9773],
+        [37.5657, 126.9800],
+        [37.5655, 126.9785],
+        [37.5705, 126.9765],
+        [37.5650, 126.9775],
+        [37.5690, 126.9740],
+        [37.5670, 126.9795],
+        [37.5640, 126.9820],
+        [37.5635, 126.9830],
+        [37.5680, 126.9770],
+        [37.5695, 126.9755],
+        [37.5700, 126.9760],
+        [37.5642, 126.9828],
+        [37.5675, 126.9785],
+        //[37.5650, 126.9805],
+        [37.5667, 126.9782],
+        [37.5685, 126.9767],
+        [37.5700, 126.9750],
+        [37.5638, 126.9825],
+        [37.5648, 126.9818],
+        [37.5656, 126.9802],
+        [37.5662, 126.9798],
+        [37.5670, 126.9787],
+        [37.5678, 126.9776],
+        [37.5663, 126.9793],
+        [37.5652, 126.9800],
+        [37.5647, 126.9812],
+        [37.5630, 126.9820],
+        [37.5635, 126.9828],
+        [37.5640, 126.9815],
+        [37.5645, 126.9810],
+        [37.5650, 126.9805],
+        [37.5670, 126.9775],
+        [37.5680, 126.9765],
+        [37.5685, 126.9758],
+        [37.5690, 126.9752],
+        [37.5700, 126.9745],
+        [37.5710, 126.9735]
+    ];
+
+    // heatmap.setData(dataPoints);
+    // heatmap.multiply(2);
+
+    // map.addLayer(heatmap);
+
+    // 커스텀 오버레이
+    // var customHtmlIcon = L.divIcon({
+    //     className: 'custom-icon',
+    //     html: '<div style="background-color: red; color: white; padding: 5px;">Custom Overlay</div>',
+    //     iconSize: [100, 50]  // 오버레이 크기
+    // });
+
+    // var customMarker = L.marker([37.5685, 126.9758], {icon: customHtmlIcon}).addTo(map);
+
+    // 커스텀 이미지 마커
+    // var customIcon = L.icon({
+    //     iconUrl: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', // 커스텀 이미지 경로
+    //     iconSize: [32, 32], // 아이콘 크기
+    //     iconAnchor: [16, 32], // 아이콘 기준점
+    //     popupAnchor: [0, -32] // 팝업이 나타날 위치
+    // });
+
+    // var marker = L.marker([37.5680, 126.9765], {icon: customIcon}).addTo(map);
+    // marker.bindPopup("This is a custom marker!");
+
+    // 바람 데이터 (기상 데이터 예시)
+    /*
+    var windData = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [37.5680, 126.9765] // 샌프란시스코
+                },
+                "properties": {
+                    "u": 10,  // 동서 방향 바람 속도 (m/s)
+                    "v": 5    // 남북 방향 바람 속도 (m/s)
+                }
+            }
+        ]
+    };
+
+    // Leaflet Velocity 플러그인 사용하여 바람 벡터 표시
+    var velocityLayer = L.velocityLayer({
+        displayValues: true,
+        displayOptions: {
+            velocityType: 'm/s',
+            opacity: 0.7,
+            position: 'bottomleft'
+        }
+    }).addTo(map);
+
+    // 바람 데이터 추가
+    velocityLayer.addData(windData);
+    */
+
+    // 데이터 포인트로 마커 추가
+    // dataPoints.forEach(function (point,index) {
+    //     marker[index] = L.marker(point).addTo(map);
+
+    //     // 마커 클릭 이벤트
+    //     marker[index].on('click', function () {
+    //         var lat = point[0];
+    //         var lng = point[1];
+    //         console.log(`Clicked coordinates: Latitude ${lat}, Longitude ${lng}`);
+    //         alert(`Clicked coordinates:\nLatitude: ${lat}\nLongitude: ${lng}`);
+    //     });
+    // });
+
+    //
+    
+    var decoratorPolyline = L.polyline(dataPoints).addTo(map);
+
+    var decorator = L.polylineDecorator(decoratorPolyline, {
+        // patterns: [
+        //     { offset: 25, repeat: 50, symbol: L.Symbol.arrowHead({ pixelSize: 10, pathOptions: { color: 'red' } }) }
+        // ]
+        patterns: [
+            { offset: 0, repeat: 10, symbol: L.Symbol.dash({pixelSize: 5, pathOptions: {color: '#000', weight: 1, opacity: 0.2}}) },
+            { offset: '16%', repeat: 80, symbol: L.Symbol.marker({rotate: true, markerOptions: {
+                icon: L.icon({
+                    iconUrl: 'https://bbecquet.github.io/Leaflet.PolylineDecorator/example/icon_plane.png',
+                    iconAnchor: [16, 16]
+                })
+            }})}
+        ]
+    }).addTo(map);
+
+    // font-awesome 활용마커(윈도우 onload후 사용가능)
+    function ExtraMarkersCreate(){
+        var redMarker = L.ExtraMarkers.icon({
+            icon: 'fa-coffee',
+            markerColor: 'red',
+            shape: 'square',
+            prefix: 'fa'
+        });
+
+        L.marker([37.5710, 126.9735], {icon: redMarker}).addTo(map);
+    }
+
+</script>
+
+
+
+</body>
+</html>
