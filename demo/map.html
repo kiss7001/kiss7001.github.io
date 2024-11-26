@@ -107,10 +107,10 @@
                     </div>
                 </div>
             </div> -->
-            <section class="content" style="padding: 0;">
-                <div class="card" style="    border-radius: initial;    box-shadow: none;">
-                    <div class="card-body2">
-                        <div id="map" style="height: 100%;"></div>
+            <section class="content no-focus" style="padding: 0;">
+                <div class="card no-focus" style="    border-radius: initial;    box-shadow: none;">
+                    <div class="card-body2 no-focus">
+                        <div id="map" class="no-focus" style="height: 100%;"></div>
                         <!-- <div id="custom_map_pop" style="top: 20px;position: absolute;right: 20px;margin: 10px;width: 100px;height: 200px;background: #f2eef18f;z-index: 1000;">
                             <div class="text-center">
                                 <button type="button" class="btn btn-block btn-default btn-xs">Default</button>
@@ -167,6 +167,12 @@
         }
         .custom-control button:hover {
             /* background-color: #0056b3; */
+        }
+
+        /* 모바일 클릭 시 포커스 제거 */
+        .no-focus {
+            outline: none; /* 포커스 외곽선 제거 */
+            -webkit-tap-highlight-color: transparent; /* 모바일 탭 하이라이트 제거 */
         }
     </style>
 
