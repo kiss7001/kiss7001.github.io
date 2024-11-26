@@ -237,43 +237,182 @@
     <script src="https://cdn.jsdelivr.net/npm/leaflet-polylinedecorator"></script>
 
     <script>
+        function initMap(){
+            map = L.map('map', {
+                center: [37.5665, 126.9780], // 대한민국 서울시청 좌표
+                zoom: 12, // 초기 줌 레벨
+                //minZoom: 5, // 최소 줌 레벨
+                maxBounds: [
+                    [33.0, 124.0],  // 대한민국 남서쪽 범위 (제주 포함)
+                    [43.0, 132.0]   // 대한민국 북동쪽 범위 (독도 포함)
+                ],
+                doubleClickZoom: false // 더블 클릭 줌 비활성화
+            });
+        
+            map.addControl(new L.Control.Fullscreen());
+        
+            // const tiles = L.tileLayer('http://openstreetmap-local.ubikhan.com:81/tile/{z}/{x}/{y}.png', {
+            //     //minZoom: 8,    // 대한민국 전체
+            //     //maxZoom: 19,    //
+            //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            // }).addTo(map);
 
-        // const map = L.map('map').setView([37.5665, 126.9780 ], 17);
-        let marker_arr = [];
-        let marker = null;
-        let circle = null;
-        let polygon = null;
-        let routing = null;
-        let svgMarker = null;
-    
-        var map = L.map('map', {
-            center: [37.5665, 126.9780], // 대한민국 서울시청 좌표
-            zoom: 12, // 초기 줌 레벨
-            //minZoom: 5, // 최소 줌 레벨
-            maxBounds: [
-                [33.0, 124.0],  // 대한민국 남서쪽 범위 (제주 포함)
-                [43.0, 132.0]   // 대한민국 북동쪽 범위 (독도 포함)
-            ],
-            doubleClickZoom: false // 더블 클릭 줌 비활성화
-        });
-    
-    
-        map.addControl(new L.Control.Fullscreen());
-    
-        // const tiles = L.tileLayer('http://openstreetmap-local.ubikhan.com:81/tile/{z}/{x}/{y}.png', {
-        //     //minZoom: 8,    // 대한민국 전체
-        //     //maxZoom: 19,    //
-        //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        // }).addTo(map);
+            const tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                //minZoom: 8,    // 대한민국 전체
+                //maxZoom: 19,    //
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+        
+            L.control.scale().addTo(map);
 
-        const tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-            //minZoom: 8,    // 대한민국 전체
-            //maxZoom: 19,    //
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
-    
-        L.control.scale().addTo(map);
 
+            // 커스텀 컨트롤박스 생성
+            const customControl = L.Control.extend({
+                options: {
+                    position: 'topright'
+                },
+                onAdd: function (map) {
+                    // Create a container for the control
+                    var container = L.DomUtil.create('div', 'custom-control');
+
+                    // Add buttons
+                    var button1 = L.DomUtil.create('button', '', container);
+                    L.DomUtil.addClass(button1, 'btn btn-block btn-default btn-xs');
+                    button1.innerText = '마커';
+                    L.DomEvent.on(button1, 'click', function () {
+                        //alert('Button 1 clicked!');
+                        customMarker();
+                    });
+
+                    var button2 = L.DomUtil.create('button', '', container);
+                    L.DomUtil.addClass(button2, 'btn btn-block btn-secondary btn-xs');
+                    button2.innerText = '원형';
+                    L.DomEvent.on(button2, 'click', function () {
+                        //alert('Button 2 clicked!');
+                        customCircle();
+                    });
+
+                    var button3 = L.DomUtil.create('button', '', container);
+                    L.DomUtil.addClass(button3, 'btn btn-block btn-success btn-xs');
+                    button3.innerText = '폴리곤';
+                    L.DomEvent.on(button3, 'click', function () {
+                        //alert('Button 3 clicked!');
+                        customPolygon();
+                    });
+
+                    var button4 = L.DomUtil.create('button', '', container);
+                    L.DomUtil.addClass(button4, 'btn btn-block btn-info btn-xs');
+                    button4.innerText = '경로검색';
+                    L.DomEvent.on(button4, 'click', function () {
+                        //alert('Button 4 clicked!');
+                        customRouting();
+                    });
+
+                    var button5 = L.DomUtil.create('button', '', container);
+                    L.DomUtil.addClass(button5, 'btn btn-block btn-danger btn-xs');
+                    button5.innerText = 'SVG 마커';
+                    L.DomEvent.on(button5, 'click', function () {
+                        //alert('Button 5 clicked!');
+                        customSvgMarker();
+                    });
+
+                    var button6 = L.DomUtil.create('button', '', container);
+                    L.DomUtil.addClass(button6, 'btn btn-block btn-warning btn-xs');
+                    button6.innerText = '히트맵';
+                    L.DomEvent.on(button6, 'click', function () {
+                        //alert('준비중');
+                        customHeatmap();
+                    });
+
+                    var button7 = L.DomUtil.create('button', '', container);
+                    L.DomUtil.addClass(button7, 'btn btn-block btn-light btn-xs');
+                    button7.innerText = '커스텀 오버레이 & 마커';
+                    L.DomEvent.on(button7, 'click', function () {
+                        //alert('준비중');
+                        customOverlayMarker();
+                    });
+
+                    var button8 = L.DomUtil.create('button', '', container);
+                    L.DomUtil.addClass(button8, 'btn btn-block btn-dark btn-xs');
+                    button8.innerText = '바람표현';
+                    L.DomEvent.on(button8, 'click', function () {
+                        //alert('준비중');
+                        customWind();
+                    });
+
+                    // Add buttons
+                    var button9 = L.DomUtil.create('button', '', container);
+                    L.DomUtil.addClass(button9, 'btn btn-block btn-default btn-xs');
+                    button9.innerText = '포인트 마다 마커';
+                    L.DomEvent.on(button9, 'click', function () {
+                        //alert('Button 9 clicked!');
+                        customPointMarker();
+                    });
+
+                    var button10 = L.DomUtil.create('button', '', container);
+                    L.DomUtil.addClass(button10, 'btn btn-block btn-secondary btn-xs');
+                    button10.innerText = '선에 방향넣기';
+                    L.DomEvent.on(button10, 'click', function () {
+                        //alert('Button 2 clicked!');
+                        customDecoratorPolyline();
+                    });
+
+                    var button11 = L.DomUtil.create('button', '', container);
+                    L.DomUtil.addClass(button11, 'btn btn-block btn-success btn-xs');
+                    button11.innerText = 'font-awesome 마커';
+                    L.DomEvent.on(button11, 'click', function () {
+                        //alert('Button 11 clicked!');
+                        customExtraMarkersCreate();
+                    });
+
+                    return container;
+                }
+            });
+
+            // 커스텀 컨트롤박스를 지도에 추가
+            map.addControl(new customControl());
+        }
+
+        //initMap();
+
+        function initDemoMap(){
+
+            var Esri_WorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, ' +
+                'AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            });
+
+            var Esri_DarkGreyCanvas = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                //minZoom: 8,    // 대한민국 전체
+                //maxZoom: 19,    //
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            });
+
+            var baseLayers = {
+                "위성지도": Esri_WorldImagery,
+                "일반지도": Esri_DarkGreyCanvas
+            };
+
+            var map = L.map('map', {
+                layers: [ Esri_WorldImagery ]
+            });
+
+            let layerControl = L.control.layers(baseLayers);
+            layerControl.addTo(map);
+            map.setView([36.113471382052175,127.26562500000001], 8);
+
+            L.control.scale().addTo(map);
+            map.addControl(new L.Control.Fullscreen());
+
+            return {
+                map: map,
+                layerControl: layerControl
+            };
+        }
+
+        var mapStuff = initDemoMap();
+        var map = mapStuff.map;
+        var layerControl = mapStuff.layerControl;
 
         // 커스텀 컨트롤박스 생성
         const customControl = L.Control.extend({
@@ -382,6 +521,7 @@
         map.addControl(new customControl());
 
         // 커스텀 마커
+        let marker = null;
         function customMarker(){
             if(marker === null){
                 marker = L.marker([37.5765, 126.9880]).addTo(map);
@@ -392,6 +532,7 @@
         }
 
         // 커스텀 원형그리기
+        let circle = null;
         function customCircle(){
             if(circle === null){
                 circle = L.circle([37.5765, 126.9880], {
@@ -407,6 +548,7 @@
         }
 
         // 커스텀 선그리기
+        let polygon = null;
         function customPolygon(){
             if(polygon === null){
                 polygon = L.polygon([
@@ -420,6 +562,7 @@
             }
         }
 
+        let routing = null;
         function customRouting(){
             if(routing === null){
                 routing = L.Routing.control({
@@ -437,6 +580,7 @@
 
         }
 
+        let svgMarker = null;
         function customSvgMarker(){
             if(svgMarker === null){
                 svgMarker = L.shapeMarker([37.5665, 126.9780], {
@@ -616,58 +760,6 @@
 
 
 
-/**
- * AdminLTE Demo Menu
- * ------------------
- * You should not use this file in production.
- * This file is for demo purposes only.
- */
-
-/* eslint-disable camelcase */
-
-(function ($) {
-  'use strict'
-
-  var $sidebar = $('.control-sidebar')
-  var $container = $('<div />', {
-    class: 'p-3 control-sidebar-content'
-  })
-
-  $sidebar.append($container)
-
-  // Checkboxes
-
-  $container.append(
-    '<h5>환경설정</h5><hr class="mb-2"/>'
-  )
-
-  $container.append('<h6>왼쪽메뉴</h6>')
-
-  var $sidebar_collapsed_checkbox = $('<input />', {
-    type: 'checkbox',
-    value: 1,
-    checked: $('body').hasClass('sidebar-collapse'),
-    class: 'mr-1'
-  }).on('click', function () {
-    if ($(this).is(':checked')) {
-      $('body').addClass('sidebar-collapse')
-      $(window).trigger('resize')
-    } else {
-      $('body').removeClass('sidebar-collapse')
-      $(window).trigger('resize')
-    }
-  })
-  var $sidebar_collapsed_container = $('<div />', { class: 'mb-1' }).append($sidebar_collapsed_checkbox).append('<span>접기</span>')
-  $container.append($sidebar_collapsed_container)
-
-  $(document).on('collapsed.lte.pushmenu', '[data-widget="pushmenu"]', function () {
-    $sidebar_collapsed_checkbox.prop('checked', true)
-  })
-  $(document).on('shown.lte.pushmenu', '[data-widget="pushmenu"]', function () {
-    $sidebar_collapsed_checkbox.prop('checked', false)
-  })
-
-})(jQuery)
 
 
     
