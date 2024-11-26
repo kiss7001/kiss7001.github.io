@@ -247,7 +247,8 @@
             maxBounds: [
                 [33.0, 124.0],  // 대한민국 남서쪽 범위 (제주 포함)
                 [43.0, 132.0]   // 대한민국 북동쪽 범위 (독도 포함)
-            ]
+            ],
+            doubleClickZoom: false // 더블 클릭 줌 비활성화
         });
     
     
@@ -322,22 +323,49 @@
                 L.DomUtil.addClass(button6, 'btn btn-block btn-warning btn-xs');
                 button6.innerText = '히트맵';
                 L.DomEvent.on(button6, 'click', function () {
-                    alert('준비중');
-                    //customHeatmap();
+                    //alert('준비중');
+                    customHeatmap();
                 });
 
                 var button7 = L.DomUtil.create('button', '', container);
                 L.DomUtil.addClass(button7, 'btn btn-block btn-light btn-xs');
                 button7.innerText = '커스텀 오버레이 & 마커';
                 L.DomEvent.on(button7, 'click', function () {
-                    alert('준비중');
+                    //alert('준비중');
+                    customOverlayMarker();
                 });
 
                 var button8 = L.DomUtil.create('button', '', container);
                 L.DomUtil.addClass(button8, 'btn btn-block btn-dark btn-xs');
                 button8.innerText = '바람표현';
                 L.DomEvent.on(button8, 'click', function () {
-                    alert('준비중');
+                    //alert('준비중');
+                    customWind();
+                });
+
+                // Add buttons
+                var button9 = L.DomUtil.create('button', '', container);
+                L.DomUtil.addClass(button9, 'btn btn-block btn-default btn-xs');
+                button9.innerText = '포인트 마다 마커';
+                L.DomEvent.on(button9, 'click', function () {
+                    //alert('Button 9 clicked!');
+                    customPointMarker();
+                });
+
+                var button10 = L.DomUtil.create('button', '', container);
+                L.DomUtil.addClass(button10, 'btn btn-block btn-secondary btn-xs');
+                button10.innerText = '선에 방향넣기';
+                L.DomEvent.on(button10, 'click', function () {
+                    //alert('Button 2 clicked!');
+                    customDecoratorPolyline();
+                });
+
+                var button11 = L.DomUtil.create('button', '', container);
+                L.DomUtil.addClass(button11, 'btn btn-block btn-success btn-xs');
+                button11.innerText = 'font-awesome 마커';
+                L.DomEvent.on(button11, 'click', function () {
+                    //alert('Button 11 clicked!');
+                    customExtraMarkersCreate();
                 });
 
                 return container;
@@ -350,7 +378,7 @@
         // 커스텀 마커
         function customMarker(){
             if(marker === null){
-                marker = L.marker([37.4565, 126.8780]).addTo(map);
+                marker = L.marker([37.5765, 126.9880]).addTo(map);
             }else{
                 map.removeLayer(marker);
                 marker = null;
@@ -421,206 +449,157 @@
 
         }
 
+        let heatmap = null;
+        let heatmapDataPoints = [];
         function customHeatmap(){
-            if(svgMarker === null){
-                svgMarker = L.shapeMarker([37.5665, 126.9780], {
-                    shape: "star",         // 모양: circle, square, diamond, etc.
-                    radius: 10,              // 반지름 (픽셀 단위)
-                    fillColor: "blue",       // 채우기 색상
-                    color: "black",          // 테두리 색상
-                    weight: 2,               // 테두리 두께
-                    opacity: 1,              // 테두리 투명도
-                    fillOpacity: 0.6         // 채우기 투명도
-                }).addTo(map);
+            if(heatmap === null){
+                heatmap = L.webGLHeatmap({
+                    size: 50,
+                    units: 'px',
+                    alphaRange: 0.4
+                });
+                heatmapDataPoints = [[37.5665,126.9780],[37.5665,126.9780],[37.5665,126.9780],[37.5702,126.9769],[37.5650,126.9808],[37.5630,126.9825],[37.5648,126.9794],[37.5675,126.9752],[37.5621,126.9834],[37.5688,126.9777],[37.5660,126.9790],[37.5672,126.9782],[37.5681,126.9773],[37.5657,126.9800],[37.5655,126.9785],[37.5705,126.9765],[37.5650,126.9775],[37.5690,126.9740],[37.5670,126.9795],[37.5640,126.9820],[37.5635,126.9830],[37.5680,126.9770],[37.5695,126.9755],[37.5700,126.9760],[37.5642,126.9828],[37.5675,126.9785],[37.5650,126.9805],[37.5667,126.9782],[37.5685,126.9767],[37.5700,126.9750],[37.5638,126.9825],[37.5648,126.9818],[37.5656,126.9802],[37.5662,126.9798],[37.5670,126.9787],[37.5678,126.9776],[37.5663,126.9793],[37.5652,126.9800],[37.5647,126.9812],[37.5630,126.9820],[37.5635,126.9828],[37.5640,126.9815],[37.5645,126.9810],[37.5650,126.9805],[37.5670,126.9775],[37.5680,126.9765],[37.5685,126.9758],[37.5690,126.9752],[37.5700,126.9745],[37.5710,126.9735]];
+                heatmap.setData(heatmapDataPoints);
+                heatmap.multiply(2);
+                map.addLayer(heatmap);
             }else{
-                svgMarker.remove();
-                svgMarker = null;
+                heatmap.remove();
+                heatmap = null;
+                heatmapDataPoints = [];
             }
-
         }
 
-
-
-
-
-    
-    
-        // // WebGL 히트맵 생성
-        // var heatmap = L.webGLHeatmap({
-        //     size: 50,             // 각 점의 반경 (픽셀 단위)
-        //     opacity: 1,         // 히트맵 전체의 투명도
-        //     intensityScale: 1.0   // 강도 스케일
-        // }).addTo(map);
-    
-        // //히트맵 데이터 추가
-        // heatmap.setData([
-        //     { lat: 37.5665, lng: 126.9780, intensity: 0.5 },
-        //     { lat: 37.5651, lng: 126.9895, intensity: 1.0 },
-        //     { lat: 37.5639, lng: 126.9757, intensity: 0.8 }
-        // ]);
-    
-        // map.addLayer(heatmap);
-    
-        //custom size for this example, and autoresize because map style has a percentage width
-        var heatmap = L.webGLHeatmap({
-            size: 50,
-            units: 'px',
-            alphaRange: 0.4
-        });
-    
-        var dataPoints = [
-            [37.5665, 126.9780], // 서울시청
-            //[37.5665, 126.9780],
-            //[37.5665, 126.9780],
-            [37.5702, 126.9769],
-            [37.5650, 126.9808],
-            [37.5630, 126.9825],
-            [37.5648, 126.9794],
-            [37.5675, 126.9752],
-            [37.5621, 126.9834],
-            [37.5688, 126.9777],
-            [37.5660, 126.9790],
-            [37.5672, 126.9782],
-            [37.5681, 126.9773],
-            [37.5657, 126.9800],
-            [37.5655, 126.9785],
-            [37.5705, 126.9765],
-            [37.5650, 126.9775],
-            [37.5690, 126.9740],
-            [37.5670, 126.9795],
-            [37.5640, 126.9820],
-            [37.5635, 126.9830],
-            [37.5680, 126.9770],
-            [37.5695, 126.9755],
-            [37.5700, 126.9760],
-            [37.5642, 126.9828],
-            [37.5675, 126.9785],
-            //[37.5650, 126.9805],
-            [37.5667, 126.9782],
-            [37.5685, 126.9767],
-            [37.5700, 126.9750],
-            [37.5638, 126.9825],
-            [37.5648, 126.9818],
-            [37.5656, 126.9802],
-            [37.5662, 126.9798],
-            [37.5670, 126.9787],
-            [37.5678, 126.9776],
-            [37.5663, 126.9793],
-            [37.5652, 126.9800],
-            [37.5647, 126.9812],
-            [37.5630, 126.9820],
-            [37.5635, 126.9828],
-            [37.5640, 126.9815],
-            [37.5645, 126.9810],
-            [37.5650, 126.9805],
-            [37.5670, 126.9775],
-            [37.5680, 126.9765],
-            [37.5685, 126.9758],
-            [37.5690, 126.9752],
-            [37.5700, 126.9745],
-            [37.5710, 126.9735]
-        ];
-    
-        // heatmap.setData(dataPoints);
-        // heatmap.multiply(2);
-    
-        // map.addLayer(heatmap);
-    
         // 커스텀 오버레이
-        // var customHtmlIcon = L.divIcon({
-        //     className: 'custom-icon',
-        //     html: '<div style="background-color: red; color: white; padding: 5px;">Custom Overlay</div>',
-        //     iconSize: [100, 50]  // 오버레이 크기
-        // });
-    
-        // var customMarker = L.marker([37.5685, 126.9758], {icon: customHtmlIcon}).addTo(map);
-    
-        // 커스텀 이미지 마커
-        // var customIcon = L.icon({
-        //     iconUrl: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', // 커스텀 이미지 경로
-        //     iconSize: [32, 32], // 아이콘 크기
-        //     iconAnchor: [16, 32], // 아이콘 기준점
-        //     popupAnchor: [0, -32] // 팝업이 나타날 위치
-        // });
-    
-        // var marker = L.marker([37.5680, 126.9765], {icon: customIcon}).addTo(map);
-        // marker.bindPopup("This is a custom marker!");
-    
-        // 바람 데이터 (기상 데이터 예시)
-        /*
-        var windData = {
-            "type": "FeatureCollection",
-            "features": [
-                {
-                    "type": "Feature",
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [37.5680, 126.9765] // 샌프란시스코
-                    },
-                    "properties": {
-                        "u": 10,  // 동서 방향 바람 속도 (m/s)
-                        "v": 5    // 남북 방향 바람 속도 (m/s)
-                    }
-                }
-            ]
-        };
-    
-        // Leaflet Velocity 플러그인 사용하여 바람 벡터 표시
-        var velocityLayer = L.velocityLayer({
-            displayValues: true,
-            displayOptions: {
-                velocityType: 'm/s',
-                opacity: 0.7,
-                position: 'bottomleft'
+        let customOverlay1Icon = null;
+        let customOverlay1Marker = null;
+        let customOverlay2Icon = null;
+        let customOverlay2Marker = null;
+        function customOverlayMarker(){
+            if(customOverlay1Marker === null){
+                // 커스텀 오버레이
+                customOverlay1Icon = L.divIcon({
+                    className: 'custom-icon',
+                    html: '<div style="background-color: red; color: white; padding: 5px;">커스텀 오버레이</div>',
+                    iconSize: [100, 50]  // 오버레이 크기
+                });
+
+                customOverlay1Marker = L.marker([37.5765, 126.9880], {icon: customOverlay1Icon}).addTo(map);
+
+                // 커스텀 이미지 마커
+                customOverlay2Icon = L.icon({
+                    iconUrl: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', // 커스텀 이미지 경로
+                    iconSize: [24, 35], // 아이콘 크기
+                    iconAnchor: [12, 35], // 아이콘 기준점
+                    popupAnchor: [0, -35] // 팝업이 나타날 위치
+                });
+            
+                customOverlay2Marker = L.marker([37.5765, 126.9880], {icon: customOverlay2Icon}).addTo(map);
+                customOverlay2Marker.bindPopup(`<div style="background-color: blue; color: white; padding: 5px;">커스텀 오버레이</div>`);
+            }else{
+                customOverlay1Marker.remove();
+                customOverlay1Marker = null;
+                customOverlay1Icon = null;
+
+                customOverlay2Icon = null;
+                customOverlay2Marker = null;
             }
-        }).addTo(map);
+        }
     
-        // 바람 데이터 추가
-        velocityLayer.addData(windData);
-        */
+        let customWindData = null;
+        let customVelocityLayer = null;
+        function customWind(){
+            if(customVelocityLayer === null){
+                $.getJSON('wind-global.json', function (data) {
+                    customWindData = data;
+
+                    customVelocityLayer = L.velocityLayer({
+                        displayValues: true,
+                        displayOptions: {
+                            velocityType: 'Global Wind',
+                            displayPosition: 'bottomleft',
+                            displayEmptyString: 'No wind data'
+                        },
+                        data: customWindData,
+                        maxVelocity: 15
+                    }).addTo(map);
+                });
+            }else{
+                customVelocityLayer.remove();
+                customVelocityLayer = null;
+                customWindData = null;
+            }
+        }
+
+        let PointMarkerData = [[37.5665,126.9780],[37.5665,126.9780],[37.5665,126.9780],[37.5702,126.9769],[37.5650,126.9808],[37.5630,126.9825],[37.5648,126.9794],[37.5675,126.9752],[37.5621,126.9834],[37.5688,126.9777],[37.5660,126.9790],[37.5672,126.9782],[37.5681,126.9773],[37.5657,126.9800],[37.5655,126.9785],[37.5705,126.9765],[37.5650,126.9775],[37.5690,126.9740],[37.5670,126.9795],[37.5640,126.9820],[37.5635,126.9830],[37.5680,126.9770],[37.5695,126.9755],[37.5700,126.9760],[37.5642,126.9828],[37.5675,126.9785],[37.5650,126.9805],[37.5667,126.9782],[37.5685,126.9767],[37.5700,126.9750],[37.5638,126.9825],[37.5648,126.9818],[37.5656,126.9802],[37.5662,126.9798],[37.5670,126.9787],[37.5678,126.9776],[37.5663,126.9793],[37.5652,126.9800],[37.5647,126.9812],[37.5630,126.9820],[37.5635,126.9828],[37.5640,126.9815],[37.5645,126.9810],[37.5650,126.9805],[37.5670,126.9775],[37.5680,126.9765],[37.5685,126.9758],[37.5690,126.9752],[37.5700,126.9745],[37.5710,126.9735]];
+        let PointMarker = [];
+        function customPointMarker(){
+            if(PointMarker.length === 0){
+                PointMarkerData.forEach(function (point,index) {
+                    PointMarker[index] = L.marker(point).addTo(map);
+            
+                    // 마커 클릭 이벤트
+                    PointMarker[index].on('click', function () {
+                        let lat = point[0];
+                        let lng = point[1];
+                        //console.log(`Clicked coordinates: Latitude ${lat}, Longitude ${lng}`);
+                        alert(`Clicked coordinates:\nLatitude: ${lat}\nLongitude: ${lng}`);
+                    });
+                });
+            }else{
+                PointMarkerData.forEach(function (point,index) {
+                    PointMarker[index].remove();
+                });
+                
+                PointMarker = [];
+            }
+        }
+
+        let decoratorPolylineData = [[37.5665,126.9780],[37.5665,126.9780],[37.5665,126.9780],[37.5702,126.9769],[37.5650,126.9808],[37.5630,126.9825],[37.5648,126.9794],[37.5675,126.9752],[37.5621,126.9834],[37.5688,126.9777],[37.5660,126.9790],[37.5672,126.9782],[37.5681,126.9773],[37.5657,126.9800],[37.5655,126.9785],[37.5705,126.9765],[37.5650,126.9775],[37.5690,126.9740],[37.5670,126.9795],[37.5640,126.9820],[37.5635,126.9830],[37.5680,126.9770],[37.5695,126.9755],[37.5700,126.9760],[37.5642,126.9828],[37.5675,126.9785],[37.5650,126.9805],[37.5667,126.9782],[37.5685,126.9767],[37.5700,126.9750],[37.5638,126.9825],[37.5648,126.9818],[37.5656,126.9802],[37.5662,126.9798],[37.5670,126.9787],[37.5678,126.9776],[37.5663,126.9793],[37.5652,126.9800],[37.5647,126.9812],[37.5630,126.9820],[37.5635,126.9828],[37.5640,126.9815],[37.5645,126.9810],[37.5650,126.9805],[37.5670,126.9775],[37.5680,126.9765],[37.5685,126.9758],[37.5690,126.9752],[37.5700,126.9745],[37.5710,126.9735]];
+        let decorator = null;
+        let decoratorPolyline = null;
+        function customDecoratorPolyline(){
+            if(decorator === null){
+                decoratorPolyline = L.polyline(decoratorPolylineData).addTo(map);
     
-        // 데이터 포인트로 마커 추가
-        // dataPoints.forEach(function (point,index) {
-        //     marker[index] = L.marker(point).addTo(map);
+                decorator = L.polylineDecorator(decoratorPolyline, {
+                    patterns: [
+                        { offset: 25, repeat: 50, symbol: L.Symbol.arrowHead({ pixelSize: 10, pathOptions: { color: 'red' } }) }
+                    ]
+                    // patterns: [
+                    //     { offset: 0, repeat: 10, symbol: L.Symbol.dash({pixelSize: 5, pathOptions: {color: '#000', weight: 1, opacity: 0.2}}) },
+                    //     { offset: '16%', repeat: 80, symbol: L.Symbol.marker({rotate: true, markerOptions: {
+                    //         icon: L.icon({
+                    //             iconUrl: 'https://bbecquet.github.io/Leaflet.PolylineDecorator/example/icon_plane.png',
+                    //             iconAnchor: [16, 16]
+                    //         })
+                    //     }})}
+                    // ]
+                }).addTo(map);
+            }else{
+                decorator.remove();
+                decorator = null;
+                decoratorPolyline.remove();
+                decoratorPolyline = null;
+            }
+        }
     
-        //     // 마커 클릭 이벤트
-        //     marker[index].on('click', function () {
-        //         var lat = point[0];
-        //         var lng = point[1];
-        //         console.log(`Clicked coordinates: Latitude ${lat}, Longitude ${lng}`);
-        //         alert(`Clicked coordinates:\nLatitude: ${lat}\nLongitude: ${lng}`);
-        //     });
-        // });
-    
-        //
+        let redMarkerIcon = null;
+        let redMarker = null;
+        function customExtraMarkersCreate(){
+            if(redMarker === null){
+                redMarkerIcon = L.ExtraMarkers.icon({
+                    icon: 'fa-coffee',
+                    markerColor: 'red',
+                    shape: 'square',
+                    prefix: 'fa'
+                });
         
-        // var decoratorPolyline = L.polyline(dataPoints).addTo(map);
-    
-        // var decorator = L.polylineDecorator(decoratorPolyline, {
-        //     // patterns: [
-        //     //     { offset: 25, repeat: 50, symbol: L.Symbol.arrowHead({ pixelSize: 10, pathOptions: { color: 'red' } }) }
-        //     // ]
-        //     patterns: [
-        //         { offset: 0, repeat: 10, symbol: L.Symbol.dash({pixelSize: 5, pathOptions: {color: '#000', weight: 1, opacity: 0.2}}) },
-        //         { offset: '16%', repeat: 80, symbol: L.Symbol.marker({rotate: true, markerOptions: {
-        //             icon: L.icon({
-        //                 iconUrl: 'https://bbecquet.github.io/Leaflet.PolylineDecorator/example/icon_plane.png',
-        //                 iconAnchor: [16, 16]
-        //             })
-        //         }})}
-        //     ]
-        // }).addTo(map);
-    
-        // font-awesome 활용마커(윈도우 onload후 사용가능)
-        function ExtraMarkersCreate(){
-            var redMarker = L.ExtraMarkers.icon({
-                icon: 'fa-coffee',
-                markerColor: 'red',
-                shape: 'square',
-                prefix: 'fa'
-            });
-    
-            L.marker([37.5710, 126.9735], {icon: redMarker}).addTo(map);
+                redMarker = L.marker([37.5710, 126.9735], {icon: redMarkerIcon}).addTo(map);
+            }else{
+                redMarker.remove();
+                redMarker = null;
+            }
+
         }
 
 
